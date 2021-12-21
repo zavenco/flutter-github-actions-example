@@ -1,0 +1,42 @@
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Firebase App Distribution"
+  lane :deploy_alpha_to_firebase do
+    firebase_app_distribution(
+        app: ENV['CI_TEST_FIREBASE_APP_ID_DEVELOPMENT'],
+        android_artifact_type: "APK",
+        android_artifact_path: "../build/app/outputs/flutter-apk/app-development-debug.apk",
+        groups: "alpha-testers",
+        release_notes_file: "../release_notes.txt"
+    )
+  end
+
+  desc "Deploy a new version to the Firebase App Distribution"
+  lane :deploy_beta_to_firebase do
+    firebase_app_distribution(
+        app: ENV['CI_TEST_FIREBASE_APP_ID_STAGING'],
+        android_artifact_type: "APK",
+        android_artifact_path: "../build/app/outputs/flutter-apk/app-staging-release.apk",
+        groups: "beta-testers",
+        release_notes_file: "../release_notes.txt"
+    )
+  end
+
+  desc 'Push the built release'
+  lane :deploy_play_store do
+    begin
+      upload_to_play_store(
+        track: 'internal',
+        aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
+        json_key: ENV['CI_TEST_GOOGLE_DEVELOPER_SERVICE_ACCOUNT_ACTOR_FASTLANE'],
+        skip_upload_screenshots: true,
+        skip_upload_images: true
+      )
+    rescue => exception
+      raise exception unless exception.message.include?('apkUpgradeVersionConflict')
+      puts 'Current version already present on the Play Store. Omitting this upload.'
+    end
+  end
+
+end
