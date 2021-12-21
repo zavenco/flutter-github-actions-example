@@ -65,9 +65,13 @@ flavorizr:
 
       android:
         applicationId: "co.zaven.flutter_ci_test.alpha"
+        firebase:
+          config: ".firebase/development/google-services.json"
 
       ios:
         bundleId: "co.zaven.flutter-ci-test.alpha"
+        firebase:
+          config: ".firebase/development/GoogleService-Info.plist"
 
     staging:
       app:
@@ -75,9 +79,13 @@ flavorizr:
 
       android:
         applicationId: "co.zaven.flutter_ci_test.beta"
+        firebase:
+          config: ".firebase/staging/google-services.json"
 
       ios:
         bundleId: "co.zaven.flutter-ci-test.beta"
+        firebase:
+          config: ".firebase/staging/GoogleService-Info.plist"
 
     production:
       app:
@@ -85,9 +93,13 @@ flavorizr:
 
       android:
         applicationId: "co.zaven.flutter_ci_test"
+        firebase:
+          config: ".firebase/production/google-services.json"
 
       ios:
         bundleId: "co.zaven.flutter-ci-test"
+        firebase:
+          config: ".firebase/production/GoogleService-Info.plist"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
