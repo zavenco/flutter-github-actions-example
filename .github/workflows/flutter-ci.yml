@@ -1,0 +1,156 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - master
+      - 'release/**'
+      - develop
+
+env:
+  FLUTTER_CHANNEL: 'stable'
+  FLUTTER_VERSION: '2.8.1'
+  JAVA_VERSION: '17.0.1+12'
+  CHECKOUT_VERSION: 'v2.4.0'
+  SETUP_JAVA_VERSION: 'v2.5.0'
+  FLUTTER_ACTION_VERSION: 'v1.5.3'
+  UPLOAD_ARTIFACT_VERSION: 'v2.3.1'
+  SETUP_RUBY_VERSION: 'v1.89.0'
+  RUBY_VERSION: '3.0.2'
+  BUNDLER_VERSION: '2.3.0'
+
+jobs:
+  build_android_development:
+    name: Build Android Alpha
+    runs-on: ubuntu-20.04
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: actions/setup-java@${{ env.SETUP_JAVA_VERSION }}
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: subosito/flutter-action@${{ env.FLUTTER_ACTION_VERSION }}
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: flutter build apk -t lib/main_development.dart --debug --flavor development --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_DEVELOPMENT }}
+      - uses: actions/upload-artifact@${{ env.UPLOAD_ARTIFACT_VERSION }}
+        with:
+          name: android-alpha
+          path: build/app/outputs/flutter-apk/app-development-debug.apk
+  build_ios_development:
+    name: Build iOS Alpha
+    runs-on: macos-11
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: ruby/setup-ruby@${{ env.SETUP_RUBY_VERSION }}
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - uses: subosito/flutter-action@${{ env.FLUTTER_ACTION_VERSION }}
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: flutter build ios -t lib/main_development.dart --release --flavor development --no-codesign --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_DEVELOPMENT }}
+      - run: gem install bundler -v ${{ env.BUNDLER_VERSION }}
+      - run: bundle install
+      - run: bundle exec fastlane build_ios_alpha
+      - uses: actions/upload-artifact@${{ env.UPLOAD_ARTIFACT_VERSION }}
+        with:
+          name: ios-alpha
+          path: ios/Flutter CI Test Alpha.ipa
+  build_android_staging:
+    name: Build Android Beta
+    runs-on: ubuntu-20.04
+    if: startWith(github.ref, 'release')
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: actions/setup-java@${{ env.SETUP_JAVA_VERSION }}
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: subosito/flutter-action@${{ env.FLUTTER_ACTION_VERSION }}
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: echo $UPLOAD_KEYSTORE_FILE | base64 -di > ./android/app/upload-key.jks
+      - run: flutter build apk -t lib/main_staging.dart --release --flavor staging --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_STAGING }}
+      - uses: actions/upload-artifact@${{ env.UPLOAD_ARTIFACT_VERSION }}
+        with:
+          name: android-beta
+          path: build/app/outputs/flutter-apk/app-staging-release.apk
+  build_ios_staging:
+    name: Build iOS Beta
+    runs-on: macos-11
+    if: startWith(github.ref, 'release')
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: ruby/setup-ruby@${{ env.SETUP_RUBY_VERSION }}
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - uses: subosito/flutter-action@${{ env.FLUTTER_ACTION_VERSION }}
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: flutter build ios -t lib/main_staging.dart --release --flavor staging --no-codesign --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_STAGING }}
+      - run: gem install bundler -v ${{ env.BUNDLER_VERSION }}
+      - run: bundle install
+      - run: bundle exec fastlane build_ios_beta
+      - uses: actions/upload-artifact@${{ env.UPLOAD_ARTIFACT_VERSION }}
+        with:
+          name: ios-beta
+          path: ios/Flutter CI Test Beta.ipa
+  build_android_production:
+    name: Build Android Production
+    runs-on: ubuntu-20.04
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: actions/setup-java@${{ env.SETUP_JAVA_VERSION }}
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: subosito/flutter-action@${{ env.FLUTTER_ACTION_VERSION }}
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: echo $UPLOAD_KEYSTORE_FILE | base64 -di > ./android/app/upload-key.jks
+      - run: flutter build appbundle -t lib/main_production.dart --release --flavor production --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_PRODUCTION }}
+      - uses: actions/upload-artifact@${{ env.UPLOAD_ARTIFACT_VERSION }}
+        with:
+          name: android-production
+          path: build/app/outputs/bundle/productionRelease/app-production-release.aab
+  build_ios_production:
+    name: Build iOS Production
+    runs-on: macos-11
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: ruby/setup-ruby@${{ env.SETUP_RUBY_VERSION }}
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - uses: subosito/flutter-action@${{ env.FLUTTER_ACTION_VERSION }}
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: flutter build ios -t lib/main_production.dart --release --flavor production --no-codesign --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_PRODUCTION }}
+      - run: gem install bundler -v ${{ env.BUNDLER_VERSION }}
+      - run: bundle install
+      - run: bundle exec fastlane build_ios_production
+      - uses: actions/upload-artifact@${{ env.UPLOAD_ARTIFACT_VERSION }}
+        with:
+          name: ios-production
+          path: ios/Flutter CI Test.ipa
