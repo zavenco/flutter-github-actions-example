@@ -204,7 +204,6 @@ jobs:
         with:
           name: ios-alpha
           path: ios/Flutter CI Test Alpha.ipa
-      - name: Release app to Firebase
       - run: | 
           export GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
           export CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT=${{ secrets.CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT }}
