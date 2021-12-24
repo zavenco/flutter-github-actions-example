@@ -74,7 +74,7 @@ platform :ios do
   desc "Deploy iOS Alpha to Firebase"
   lane :deploy_ios_alpha do
 
-    ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ENV['CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT']
+    #ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ENV['CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT']
 
     firebase_app_distribution(
       app: ENV['CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT'],
@@ -112,7 +112,7 @@ platform :ios do
   desc "Deploy iOS Beta to Firebase"
   lane :deploy_ios_beta do
 
-    ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ENV['CI_TEST_FIREBASE_SERVICE_ACCOUNT_STAGING']
+    #ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ENV['CI_TEST_FIREBASE_SERVICE_ACCOUNT_STAGING']
 
     firebase_app_distribution(
       app: ENV['CI_TEST_IOS_FIREBASE_APP_ID_STAGING'],

@@ -15,9 +15,12 @@ env:
   SETUP_JAVA_VERSION: 'v2.5.0'
   FLUTTER_ACTION_VERSION: 'v1.5.3'
   UPLOAD_ARTIFACT_VERSION: 'v2.3.1'
+  DOWNLOAD_ARTIFACT_VERSION: 'v2.1.0'
   SETUP_RUBY_VERSION: 'v1.89.0'
   RUBY_VERSION: '3.0.2'
   BUNDLER_VERSION: '2.3.0'
+  FIREBASE_INSTALL_DIR: '/usr/local/bin'
+  FIREBASE_VERSION: 'v10.0.1'
 
 jobs:
   build_android_development:
@@ -41,6 +44,7 @@ jobs:
         with:
           name: android-alpha
           path: build/app/outputs/flutter-apk/app-development-debug.apk
+          retention-days: 1
   build_ios_development:
     name: Build iOS Alpha
     runs-on: macos-11
@@ -64,6 +68,7 @@ jobs:
         with:
           name: ios-alpha
           path: ios/Flutter CI Test Alpha.ipa
+          retention-days: 1
   build_android_staging:
     name: Build Android Beta
     runs-on: ubuntu-20.04
@@ -86,6 +91,7 @@ jobs:
         with:
           name: android-beta
           path: build/app/outputs/flutter-apk/app-staging-release.apk
+          retention-days: 1
   build_ios_staging:
     name: Build iOS Beta
     runs-on: macos-11
@@ -109,6 +115,7 @@ jobs:
         with:
           name: ios-beta
           path: ios/Flutter CI Test Beta.ipa
+          retention-days: 1
   build_android_production:
     name: Build Android Production
     runs-on: ubuntu-20.04
@@ -131,6 +138,7 @@ jobs:
         with:
           name: android-production
           path: build/app/outputs/bundle/productionRelease/app-production-release.aab
+          retention-days: 1
   build_ios_production:
     name: Build iOS Production
     runs-on: macos-11
@@ -154,3 +162,54 @@ jobs:
         with:
           name: ios-production
           path: ios/Flutter CI Test.ipa
+          retention-days: 1
+  deploy_android_development:
+    name: Deploy Android Alpha
+    runs-on: ubuntu-20.04
+    if: github.ref == 'refs/heads/develop'
+    needs: build_android_development
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: ruby/setup-ruby@${{ env.SETUP_RUBY_VERSION }}
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - run: sudo mkdir -p ${{ env.FIREBASE_INSTALL_DIR }}
+      - run: sudo curl -o ${{ env.FIREBASE_INSTALL_DIR }} -L --progress-bar https://firebase.tools/bin/linux/${{ env.FIREBASE_VERSION }}
+      - run: sudo chmod +rx ${{ env.FIREBASE_INSTALL_DIR }}/firebase
+      - uses: actions/download-artifact@${{ env.DOWNLOAD_ARTIFACT_VERSION }}
+        with:
+          name: android-alpha
+          path: build/app/outputs/flutter-apk/app-development-debug.apk
+      - run: | 
+          export GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
+          export CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT=${{ secrets.CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT }}
+          cd android
+          gem install bundler -v "$BUNDLER_VERSION"
+          bundle install
+          bundle exec fastlane deploy_android_alpha
+  deploy_ios_development:
+    name: Deploy iOS Alpha
+    runs-on: macos-11
+    if: github.ref == 'refs/heads/develop'
+    needs: build_ios_development
+    steps:
+      - uses: actions/checkout@${{ env.CHECKOUT_VERSION }}
+      - uses: ruby/setup-ruby@${{ env.SETUP_RUBY_VERSION }}
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - run: sudo mkdir -p ${{ env.FIREBASE_INSTALL_DIR }}
+      - run: sudo curl -o ${{ env.FIREBASE_INSTALL_DIR }} -L --progress-bar https://firebase.tools/bin/macos/${{ env.FIREBASE_VERSION }}
+      - run: sudo chmod +rx ${{ env.FIREBASE_INSTALL_DIR }}/firebase
+      - uses: actions/download-artifact@${{ env.DOWNLOAD_ARTIFACT_VERSION }}
+        with:
+          name: ios-alpha
+          path: ios/Flutter CI Test Alpha.ipa
+      - name: Release app to Firebase
+      - run: | 
+          export GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
+          export CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT=${{ secrets.CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT }}
+          export MATCH_PASSWORD=${{ secrets.MATCH_PASSWORD }}
+          cd ios
+          gem install bundler -v "$BUNDLER_VERSION"
+          bundle install
+          bundle exec fastlane deploy_ios_alpha
