@@ -205,7 +205,7 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
           export CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT=${{ secrets.CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT }}
           cd android
-          gem install bundler -v "$BUNDLER_VERSION"
+          gem install bundler -v ${{ env.BUNDLER_VERSION }}
           bundle install
           bundle exec fastlane deploy_android_alpha
   deploy_ios_development:
@@ -229,6 +229,6 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
           export CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT=${{ secrets.CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT }}
           cd ios
-          gem install bundler -v "$BUNDLER_VERSION"
+          gem install bundler -v ${{ env.BUNDLER_VERSION }}
           bundle install
           bundle exec fastlane deploy_ios_alpha
