@@ -66,7 +66,7 @@ jobs:
   build_android_staging:
     name: Build Android Beta
     runs-on: ubuntu-20.04
-    if: startWith(github.ref, 'release')
+    if: startsWith(github.ref, refs/heads/release)
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
@@ -89,7 +89,7 @@ jobs:
   build_ios_staging:
     name: Build iOS Beta
     runs-on: macos-11
-    if: startWith(github.ref, 'release')
+    if: startsWith(github.ref, refs/heads/release)
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
