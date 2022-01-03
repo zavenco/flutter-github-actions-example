@@ -71,7 +71,7 @@ jobs:
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      - run: | 
+        run: | 
           cd ios/
           gem install bundler -v ${{ env.BUNDLER_VERSION }}
           bundle install
