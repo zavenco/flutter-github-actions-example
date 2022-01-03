@@ -168,7 +168,7 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
       - run: sudo mkdir -p ${{ env.FIREBASE_INSTALL_DIR }}
-      - run: sudo curl -o ${{ env.FIREBASE_INSTALL_DIR }} -L --progress-bar https://firebase.tools/bin/linux/${{ env.FIREBASE_VERSION }}
+      - run: sudo curl -o ${{ env.FIREBASE_INSTALL_DIR }}/firebase -L --progress-bar https://firebase.tools/bin/linux/${{ env.FIREBASE_VERSION }}
       - run: sudo chmod +rx ${{ env.FIREBASE_INSTALL_DIR }}/firebase
       - uses: actions/download-artifact@v2
         with:
@@ -192,7 +192,7 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
       - run: sudo mkdir -p ${{ env.FIREBASE_INSTALL_DIR }}
-      - run: sudo curl -o ${{ env.FIREBASE_INSTALL_DIR }} -L --progress-bar https://firebase.tools/bin/macos/${{ env.FIREBASE_VERSION }}
+      - run: sudo curl -o ${{ env.FIREBASE_INSTALL_DIR }}/firebase -L --progress-bar https://firebase.tools/bin/macos/${{ env.FIREBASE_VERSION }}
       - run: sudo chmod +rx ${{ env.FIREBASE_INSTALL_DIR }}/firebase
       - uses: actions/download-artifact@v2
         with:
