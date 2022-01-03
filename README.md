@@ -72,6 +72,7 @@ CI and CD are performed using Github Actions. [Here](.github/workflows/flutter-c
     - `APP_STORE_CONNECT_API_KEY_KEY`
     - `APP_STORE_CONNECT_API_KEY_KEY_ID`
     - `MATCH_PASSWORD`
+    - `FASTLANE_MATCH_GIT_DEPLOY_KEY`
 - API Urls
     - `CI_TEST_API_URL_PRODUCTION`
     - `CI_TEST_API_URL_STAGING`

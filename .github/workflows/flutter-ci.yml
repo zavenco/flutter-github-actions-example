@@ -45,6 +45,18 @@ jobs:
     if: github.ref == 'refs/heads/develop'
     steps:
       - uses: actions/checkout@v2
+      - name: Setup SSH agent
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          FASTLANE_MATCH_GIT_DEPLOY_KEY: ${{ secrets.FASTLANE_MATCH_GIT_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          mkdir ./ssh_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          echo "$FASTLANE_MATCH_GIT_DEPLOY_KEY" > ./ssh_key/deploy_key
+          chmod 0600 ./ssh_key/deploy_key
+          ssh-add ./ssh_key/deploy_key
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
@@ -55,14 +67,27 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build ios -t lib/main_development.dart --release --flavor development --no-codesign --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_DEVELOPMENT }}
-      - run: gem install bundler -v ${{ env.BUNDLER_VERSION }}
-      - run: bundle install
-      - run: bundle exec fastlane build_ios_alpha
+      - name: Build app
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      - run: | 
+          cd ios/
+          gem install bundler -v ${{ env.BUNDLER_VERSION }}
+          bundle install
+          bundle exec fastlane build_ios_alpha
       - uses: actions/upload-artifact@v2
         with:
           name: ios-alpha
-          path: ios/Flutter CI Test Alpha.ipa
+          path: Flutter CI Test Alpha.ipa
           retention-days: 1
+      - name: Cleanup
+        if: always()
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh-add -D
+          rm -rf ./ssh_key
   build_android_staging:
     name: Build Android Beta
     runs-on: ubuntu-20.04
@@ -102,6 +127,7 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build ios -t lib/main_staging.dart --release --flavor staging --no-codesign --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_STAGING }}
+      - run: export MATCH_PASSWORD=${{ secrets.MATCH_PASSWORD }}
       - run: gem install bundler -v ${{ env.BUNDLER_VERSION }}
       - run: bundle install
       - run: bundle exec fastlane build_ios_beta
@@ -149,6 +175,7 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build ios -t lib/main_production.dart --release --flavor production --no-codesign --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_PRODUCTION }}
+      - run: export MATCH_PASSWORD=${{ secrets.MATCH_PASSWORD }}
       - run: gem install bundler -v ${{ env.BUNDLER_VERSION }}
       - run: bundle install
       - run: bundle exec fastlane build_ios_production
@@ -201,7 +228,6 @@ jobs:
       - run: | 
           export GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
           export CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT=${{ secrets.CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT }}
-          export MATCH_PASSWORD=${{ secrets.MATCH_PASSWORD }}
           cd ios
           gem install bundler -v "$BUNDLER_VERSION"
           bundle install
