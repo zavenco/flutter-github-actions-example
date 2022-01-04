@@ -194,19 +194,18 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      # - run: sudo mkdir -p ${{ env.FIREBASE_INSTALL_DIR }}
-      # - run: sudo curl -o ${{ env.FIREBASE_INSTALL_DIR }}/firebase -L --progress-bar https://firebase.tools/bin/linux/${{ env.FIREBASE_VERSION }}
-      # - run: sudo chmod +rx ${{ env.FIREBASE_INSTALL_DIR }}/firebase
       - uses: actions/download-artifact@v2
         with:
           name: android-alpha
           path: build/app/outputs/flutter-apk/app-development-debug.apk
       - name: Deploy app
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
+          CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT: ${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
           CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT: ${{ secrets.CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT }}
         run: | 
           cd android
+          echo $CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT > ./service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/service-account.json
           gem install bundler -v ${{ env.BUNDLER_VERSION }}
           bundle install
           bundle exec fastlane deploy_android_alpha
