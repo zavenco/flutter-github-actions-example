@@ -11,10 +11,8 @@ env:
   FLUTTER_CHANNEL: 'stable'
   FLUTTER_VERSION: '2.8.1'
   JAVA_VERSION: '17.0.1+12'
-  RUBY_VERSION: '3.0.2'
+  RUBY_VERSION: '3.0.3'
   BUNDLER_VERSION: '2.3.0'
-  FIREBASE_INSTALL_DIR: '/usr/local/bin'
-  FIREBASE_VERSION: 'v10.0.1'
 
 jobs:
   build_android_development:
