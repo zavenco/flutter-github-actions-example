@@ -1,0 +1,61 @@
+name: Build & Deploy Android Alpha
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  FLUTTER_CHANNEL: 'stable'
+  FLUTTER_VERSION: '2.8.1'
+  JAVA_VERSION: '17.0.1+12'
+  RUBY_VERSION: '3.0.3'
+  BUNDLER_VERSION: '2.3.0'
+
+jobs:
+  build_android_development:
+    name: Build Android Alpha
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: flutter build apk -t lib/main_development.dart --debug --flavor development --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_DEVELOPMENT }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-alpha
+          path: build/app/outputs/flutter-apk/app-development-debug.apk
+          retention-days: 1
+  deploy_android_development:
+    name: Deploy Android Alpha
+    runs-on: ubuntu-20.04
+    needs: build_android_development
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - uses: actions/download-artifact@v2
+        with:
+          name: android-alpha
+          path: build/app/outputs/flutter-apk/app-development-debug.apk
+      - run: stat build/app/outputs/flutter-apk/app-development-debug.apk
+      - name: Deploy app
+        env:
+          CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT: ${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT }}
+          CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT: ${{ secrets.CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT }}
+        run: | 
+          cd android
+          echo $CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT > ./service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/service-account.json
+          gem install bundler -v ${{ env.BUNDLER_VERSION }}
+          bundle install
+          bundle exec fastlane deploy_android_alpha
