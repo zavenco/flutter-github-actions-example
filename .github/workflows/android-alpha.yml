@@ -46,7 +46,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: android-alpha
-          path: build/app/outputs/flutter-apk/app-development-debug.apk
+          path: build/app/outputs/flutter-apk
       - run: stat build/app/outputs/flutter-apk/app-development-debug.apk
       - name: Deploy app
         env:
