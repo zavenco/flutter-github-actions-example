@@ -34,7 +34,7 @@ jobs:
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
           KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
-      - run: |
+        run: |
           echo $UPLOAD_KEYSTORE_FILE | base64 -di > ./android/app/upload-key.jks
           flutter build apk -t lib/main_staging.dart --release --flavor staging --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_STAGING }}
       - uses: actions/upload-artifact@v2
