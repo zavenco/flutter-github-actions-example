@@ -1,0 +1,35 @@
+name: Create release tag
+
+on:
+  create
+
+jobs:
+  create_release_tag:
+    name: Create release tag
+    runs-on: ubuntu-20.04
+    if: startsWith(github.ref, 'refs/heads/release')
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/github-script@v5
+        with:
+          script: |
+            const tag_name = github.ref.replace('refs/heads/release/', 'v')
+
+            const fs = require('fs')
+            const message = fs.readFileSync('./release_notes.txt', {encoding:'utf8', flag:'r'})
+
+            await github.rest.git.createTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: tag_name,
+              message: message,
+              object: context.sha,
+              type: 'commit'
+            })
+
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/' + tag_name,
+              sha: context.sha
+            })

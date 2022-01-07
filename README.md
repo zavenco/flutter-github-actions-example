@@ -2,6 +2,8 @@
 
 App for testing github actions workflow.
 
+![](https://github.com/zavenco/flutter-ci-test/workflows/Lint%20Code%20Base/badge.svg)
+
 ![](https://github.com/zavenco/flutter-ci-test/workflows/Build%20%26%20Deploy%20Android%20Alpha/badge.svg)
 ![](https://github.com/zavenco/flutter-ci-test/workflows/Build%20%26%20Deploy%20Android%20Beta/badge.svg)
 ![](https://github.com/zavenco/flutter-ci-test/workflows/Build%20%26%20Deploy%20Android%20Production/badge.svg)
