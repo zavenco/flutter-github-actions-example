@@ -12,6 +12,10 @@ on:
       - 'release/**'
       - develop
 
+env:
+  FLUTTER_CHANNEL: 'stable'
+  FLUTTER_VERSION: '2.8.1'
+
 jobs:
   lint:
     name: Lint Code Base
@@ -21,6 +25,10 @@ jobs:
         with:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
       - name: Lint Code Base
         uses: github/super-linter/slim@v4
         env:

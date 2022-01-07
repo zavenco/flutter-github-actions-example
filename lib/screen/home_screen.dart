@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ci_test/flavors.dart';
 
-import '../flavors.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
