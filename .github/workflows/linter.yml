@@ -1,0 +1,31 @@
+name: Lint Code Base
+
+on:
+  push:
+    branches:
+      - master
+      - 'release/**'
+      - develop
+  pull_request:
+    branches:
+      - master
+      - 'release/**'
+      - develop
+
+env:
+  FLUTTER_CHANNEL: 'stable'
+  FLUTTER_VERSION: '2.8.1'
+
+jobs:
+  lint:
+    name: Lint Code Base
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: flutter analyze
