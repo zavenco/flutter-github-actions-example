@@ -30,6 +30,7 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - run: flutter pub get
+      - run: flutter analyze
       - name: Lint Code Base
         uses: github/super-linter/slim@v4
         env:
