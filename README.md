@@ -49,9 +49,9 @@ Remember to provide build flavor at `Run\Debug Configurations` in Android Studio
 
 ### Continuous Integration and Deployment
 
-CI and CD are performed using GitHub Actions. [Here](.github/workflows/flutter-ci.yml) you can see configuration file.
+CI and CD are performed using GitHub Actions. [Here](.github/workflows) you can see configuration files.
 
-### Environment variables:
+### Environment variables
 
 - Services accounts
     - `CI_TEST_FIREBASE_SERVICE_ACCOUNT_PRODUCTION`
