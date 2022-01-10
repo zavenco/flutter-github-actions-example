@@ -15,12 +15,7 @@ jobs:
           RELEASE_REF: ${{ secrets.GITHUB_REF }}
         with:
           script: |
-            const { RELEASE_REF } = process.env
-            const release_ref = process.env.RELEASE_REF
-
-            console.log(release_ref)
-
-            const tag_name = release_ref.replace('refs/heads/release/', 'v')
+            const tag_name = context.ref.replace('refs/heads/release/', 'v')
 
             const fs = require('fs')
             const message = fs.readFileSync('./release_notes.txt', {encoding:'utf8', flag:'r'})
