@@ -30,6 +30,7 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter analyze
       - name: Lint Code Base
         uses: github/super-linter/slim@v4
