@@ -3,8 +3,7 @@ name: Create release tag
 on:
   push:
     branches:
-      - develop
-      # - master
+      - master
 
 jobs:
   create_release_tag:
@@ -17,7 +16,6 @@ jobs:
         with:
           file: './pubspec.yaml'
           key-path: '["version"]'
-      - run: echo ${{ steps.version.outputs.data }}
       - uses: actions/github-script@v5
         with:
           script: |
