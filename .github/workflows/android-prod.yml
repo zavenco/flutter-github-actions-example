@@ -58,12 +58,9 @@ jobs:
       - run: stat build/app/outputs/bundle/productionRelease/app-production-release.aab
       - name: Deploy app
         env:
-          CI_TEST_FIREBASE_SERVICE_ACCOUNT_PRODUCTION: ${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_PRODUCTION }}
-          CI_TEST_ANDROID_FIREBASE_APP_ID_PRODUCTION: ${{ secrets.CI_TEST_ANDROID_FIREBASE_APP_ID_PRODUCTION }}
+          CI_TEST_GOOGLE_DEVELOPER_SERVICE_ACCOUNT_ACTOR_FASTLANE: ${{ secrets.CI_TEST_GOOGLE_DEVELOPER_SERVICE_ACCOUNT_ACTOR_FASTLANE }}
         run: | 
           cd android
-          echo $CI_TEST_FIREBASE_SERVICE_ACCOUNT_PRODUCTION > ./service-account.json
-          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/service-account.json
           gem install bundler -v ${{ env.BUNDLER_VERSION }}
           bundle install
           bundle exec fastlane deploy_android_production

@@ -1,21 +1,30 @@
 name: Create release tag
 
 on:
-  create
+  push:
+    branches:
+      - develop
+      # - master
 
 jobs:
   create_release_tag:
     name: Create release tag
     runs-on: ubuntu-20.04
-    if: startsWith(github.ref, 'refs/heads/release')
     steps:
       - uses: actions/checkout@v2
+      - uses: KJ002/read-yaml@1.5
+        id: version
+        with:
+          file: './pubspec.yaml'
+          key-path: '["version"]'
+      - run: echo ${{ steps.version.outputs.data }}
       - uses: actions/github-script@v5
         with:
           script: |
-            const tag_name = context.ref.replace('refs/heads/release/', 'v')
+            const tag_name = 'v${{ steps.version.outputs.data }}'
 
             const fs = require('fs')
+
             const message = fs.readFileSync('./release_notes.txt', {encoding:'utf8', flag:'r'})
 
             await github.rest.git.createTag({
