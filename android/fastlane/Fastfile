@@ -2,9 +2,9 @@ default_platform(:android)
 
 platform :android do
   desc "Deploy a new version to the Firebase App Distribution"
-  lane :deploy_alpha_to_firebase do
+  lane :deploy_android_alpha do
     firebase_app_distribution(
-        app: ENV['CI_TEST_FIREBASE_APP_ID_DEVELOPMENT'],
+        app: ENV['CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT'],
         android_artifact_type: "APK",
         android_artifact_path: "../build/app/outputs/flutter-apk/app-development-debug.apk",
         groups: "alpha-testers",
@@ -13,9 +13,9 @@ platform :android do
   end
 
   desc "Deploy a new version to the Firebase App Distribution"
-  lane :deploy_beta_to_firebase do
+  lane :deploy_android_beta do
     firebase_app_distribution(
-        app: ENV['CI_TEST_FIREBASE_APP_ID_STAGING'],
+        app: ENV['CI_TEST_ANDROID_FIREBASE_APP_ID_STAGING'],
         android_artifact_type: "APK",
         android_artifact_path: "../build/app/outputs/flutter-apk/app-staging-release.apk",
         groups: "beta-testers",
@@ -24,12 +24,12 @@ platform :android do
   end
 
   desc 'Push the built release'
-  lane :deploy_play_store do
+  lane :deploy_android_production do
     begin
       upload_to_play_store(
         track: 'internal',
         aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
-        json_key: ENV['CI_TEST_GOOGLE_DEVELOPER_SERVICE_ACCOUNT_ACTOR_FASTLANE'],
+        json_key_data: ENV['CI_TEST_GOOGLE_DEVELOPER_SERVICE_ACCOUNT_ACTOR_FASTLANE'],
         skip_upload_screenshots: true,
         skip_upload_images: true
       )

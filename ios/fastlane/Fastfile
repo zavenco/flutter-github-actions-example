@@ -1,0 +1,159 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+require 'securerandom'
+
+# Default temporary keychain password and name, if not included from environment
+TEMP_KEYCHAIN_NAME_DEFAULT = "flutter_ci_test"
+TEMP_KEYCHAIN_PASSWORD_DEFAULT = SecureRandom.hex
+
+# Remove the temporary keychain, if it exists
+def delete_temp_keychain(name)
+  delete_keychain(
+    name: name
+  ) if File.exist? File.expand_path("~/Library/Keychains/#{name}-db")
+end
+
+# Create the temporary keychain with name and password
+def create_temp_keychain(name, password)
+  create_keychain(
+    name: name,
+    password: password,
+    unlock: false,
+    timeout: 0
+  )
+end
+
+# Ensure we have a fresh, empty temporary keychain
+def ensure_temp_keychain(name, password)
+  delete_temp_keychain(name)
+  create_temp_keychain(name, password)
+end
+
+platform :ios do
+
+  desc "Build & sign iOS Alpha"
+  lane :build_ios_alpha do
+    disable_automatic_code_signing(
+      path: "./Runner.xcodeproj"
+    )
+
+    ensure_temp_keychain(TEMP_KEYCHAIN_NAME_DEFAULT, TEMP_KEYCHAIN_PASSWORD_DEFAULT)
+
+    match(
+      keychain_name: TEMP_KEYCHAIN_NAME_DEFAULT,
+      keychain_password: TEMP_KEYCHAIN_PASSWORD_DEFAULT,
+      readonly: true,
+      type: 'adhoc'
+    )
+
+    build_app(
+      scheme: "development",
+      output_name: "Flutter CI Test Alpha.ipa",
+      configuration: "Release-development",
+      export_method: "ad-hoc"
+      )
+
+    delete_temp_keychain(TEMP_KEYCHAIN_NAME_DEFAULT)
+  end
+
+  desc "Deploy iOS Alpha to Firebase"
+  lane :deploy_ios_alpha do
+
+    #ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ENV['CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT']
+
+    firebase_app_distribution(
+      app: ENV['CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT'],
+      ipa_path: "./Flutter CI Test Alpha.ipa",
+      groups: "alpha-testers",
+      release_notes_file: "../release_notes.txt"
+    )
+  end
+
+  desc "Build & sign iOS Beta"
+  lane :build_ios_beta do
+    disable_automatic_code_signing(
+      path: "./Runner.xcodeproj"
+    )
+
+    ensure_temp_keychain(TEMP_KEYCHAIN_NAME_DEFAULT, TEMP_KEYCHAIN_PASSWORD_DEFAULT)
+
+    match(
+      keychain_name: TEMP_KEYCHAIN_NAME_DEFAULT,
+      keychain_password: TEMP_KEYCHAIN_PASSWORD_DEFAULT,
+      readonly: true,
+      type: 'adhoc'
+    )
+
+    build_app(
+      scheme: "staging",
+      output_name: "Flutter CI Test Beta.ipa",
+      configuration: "Release-staging",
+      export_method: "ad-hoc"
+      )
+
+    delete_temp_keychain(TEMP_KEYCHAIN_NAME_DEFAULT)
+  end
+
+  desc "Deploy iOS Beta to Firebase"
+  lane :deploy_ios_beta do
+
+    #ENV['GOOGLE_APPLICATION_CREDENTIALS'] = ENV['CI_TEST_FIREBASE_SERVICE_ACCOUNT_STAGING']
+
+    firebase_app_distribution(
+      app: ENV['CI_TEST_IOS_FIREBASE_APP_ID_STAGING'],
+      ipa_path: "./Flutter CI Test Beta.ipa",
+      groups: "beta-testers",
+      release_notes_file: "../release_notes.txt"
+    )
+  end
+
+  desc "Build & sign iOS Production"
+  lane :build_ios_production do
+    disable_automatic_code_signing(
+      path: "./Runner.xcodeproj"
+    )
+
+    ensure_temp_keychain(TEMP_KEYCHAIN_NAME_DEFAULT, TEMP_KEYCHAIN_PASSWORD_DEFAULT)
+
+    match(
+      keychain_name: TEMP_KEYCHAIN_NAME_DEFAULT,
+      keychain_password: TEMP_KEYCHAIN_PASSWORD_DEFAULT,
+      readonly: true,
+      type: "appstore"
+    )
+
+    build_app(
+      scheme: "production",
+      output_name: "Flutter CI Test.ipa",
+      configuration: "Release-production",
+      export_method: "app-store"
+    )
+
+    delete_temp_keychain(TEMP_KEYCHAIN_NAME_DEFAULT)
+  end
+
+  desc "Deploy iOS Production"
+  lane :deploy_ios_production do
+
+    testflight(
+      ipa: "./Flutter CI Test.ipa",
+      skip_submission: true,
+      distribute_external: false
+    )
+  end
+end

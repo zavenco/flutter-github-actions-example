@@ -1,6 +1,10 @@
 # flutter_ci_test
 
-App for testing github actions workflow.
+App for testing GitHub actions workflow.
+
+![](https://github.com/zavenco/flutter-ci-test/workflows/Build%20%26%20Deploy%20Android%20Alpha/badge.svg)
+![](https://github.com/zavenco/flutter-ci-test/workflows/Build%20%26%20Deploy%20Android%20Beta/badge.svg)
+![](https://github.com/zavenco/flutter-ci-test/workflows/Build%20%26%20Deploy%20Android%20Production/badge.svg)
 
 ## Languages, libraries and tools used
 
@@ -43,18 +47,18 @@ Remember to provide build flavor at `Run\Debug Configurations` in Android Studio
 
 ### Continuous Integration and Deployment
 
-CI and CD are performed using Github Actions. [Here](.github/workflows/flutter-ci.yml) you can see configuration file.
+CI and CD are performed using GitHub Actions. [Here](.github/workflows) you can see configuration files.
 
-### Environment variables:
+### Environment variables
 
 - Services accounts
     - `CI_TEST_FIREBASE_SERVICE_ACCOUNT_PRODUCTION`
     - `CI_TEST_FIREBASE_SERVICE_ACCOUNT_STAGING`
     - `CI_TEST_FIREBASE_SERVICE_ACCOUNT_DEVELOPMENT`
-- Firebase application id
-    - `CI_TEST_FIREBASE_APP_ID_PRODUCTION`
-    - `CI_TEST_FIREBASE_APP_ID_STAGING`
-    - `CI_TEST_FIREBASE_APP_ID_DEVELOPMENT`
+- Firebase application ID
+    - `CI_TEST_ANDROID_FIREBASE_APP_ID_PRODUCTION`
+    - `CI_TEST_ANDROID_FIREBASE_APP_ID_STAGING`
+    - `CI_TEST_ANDROID_FIREBASE_APP_ID_DEVELOPMENT`
     - `CI_TEST_IOS_FIREBASE_APP_ID_PRODUCTION`
     - `CI_TEST_IOS_FIREBASE_APP_ID_STAGING`
     - `CI_TEST_IOS_FIREBASE_APP_ID_DEVELOPMENT`
@@ -70,7 +74,8 @@ CI and CD are performed using Github Actions. [Here](.github/workflows/flutter-c
     - `APP_STORE_CONNECT_API_KEY_KEY`
     - `APP_STORE_CONNECT_API_KEY_KEY_ID`
     - `MATCH_PASSWORD`
-- API Urls
+    - `FASTLANE_MATCH_GIT_DEPLOY_KEY`
+- API URLs
     - `CI_TEST_API_URL_PRODUCTION`
     - `CI_TEST_API_URL_STAGING`
     - `CI_TEST_API_URL_DEVELOPMENT`
