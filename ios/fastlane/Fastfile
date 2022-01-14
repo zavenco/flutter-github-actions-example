@@ -143,6 +143,8 @@ platform :ios do
 
   desc "Deploy iOS Production"
   lane :deploy_ios_production do
+    app_store_connect_api_key(in_house: false)
+    
     testflight(
       ipa: "./Flutter CI Test.ipa",
       skip_submission: true,
