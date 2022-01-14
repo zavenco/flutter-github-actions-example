@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ci_test/screen/home/home_screen.dart';
+import 'package:flutter_ci_test/screen/post_details/post_details_screen.dart';
+import 'package:flutter_ci_test/theme.dart';
 
 import 'flavors.dart';
 
@@ -9,15 +11,20 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = ThemeData.light();
+
     return MaterialApp(
       title: F.title,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: theme.copyWith(
+        colorScheme: theme.colorScheme.copyWith(primary: AppColors.primary, secondary: AppColors.secondary),
       ),
       home: _flavorBanner(
         child: const HomeScreen(),
         show: kDebugMode,
       ),
+      routes: {
+        PostDetailsScreen.routeName: (context) => const PostDetailsScreen(),
+      },
     );
   }
 
