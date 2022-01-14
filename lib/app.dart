@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ci_test/screen/home_screen.dart';
+import 'package:flutter_ci_test/screen/home/home_screen.dart';
 
 import 'flavors.dart';
 
