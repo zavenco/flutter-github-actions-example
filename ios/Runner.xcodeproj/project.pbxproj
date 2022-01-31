@@ -564,9 +564,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -575,7 +576,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "co.zaven.flutter-ci-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore co.zaven.flutter-ci-test";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -975,9 +976,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -986,7 +988,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "co.zaven.flutter-ci-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore co.zaven.flutter-ci-test";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1000,9 +1002,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1011,7 +1014,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "co.zaven.flutter-ci-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore co.zaven.flutter-ci-test";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1232,11 +1235,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D17F807B7700D2F36250AF3A /* Pods-Runner.debug-development.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc co.zaven.flutter-ci-test.alpha";
 			};
 			name = "Debug-development";
 		};
@@ -1244,11 +1247,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E19FBA87C8E7B62777050FBE /* Pods-Runner.profile-development.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc co.zaven.flutter-ci-test.alpha";
 			};
 			name = "Profile-development";
 		};
@@ -1256,11 +1259,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2B64DF3819A1B9C3F488D5D0 /* Pods-Runner.release-development.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc co.zaven.flutter-ci-test.alpha";
 			};
 			name = "Release-development";
 		};
@@ -1268,10 +1271,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5320E74BEE464AF700D22221 /* Pods-Runner.debug-staging.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc co.zaven.flutter-ci-test.beta";
 			};
 			name = "Debug-staging";
 		};
@@ -1279,10 +1283,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 06280078821D8361070E81B9 /* Pods-Runner.profile-staging.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc co.zaven.flutter-ci-test.beta";
 			};
 			name = "Profile-staging";
 		};
@@ -1290,10 +1295,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 471D7A7EE5AE26976CB999EA /* Pods-Runner.release-staging.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc co.zaven.flutter-ci-test.beta";
 			};
 			name = "Release-staging";
 		};
@@ -1301,10 +1307,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3C6D0B9A02A1E371C3CC9E5 /* Pods-Runner.debug-production.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore co.zaven.flutter-ci-test";
 			};
 			name = "Debug-production";
 		};
@@ -1312,10 +1319,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A4812B483738F18ADAFB055C /* Pods-Runner.profile-production.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore co.zaven.flutter-ci-test";
 			};
 			name = "Profile-production";
 		};
@@ -1323,10 +1331,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6E118ABDD2AE489BC7B6A69F /* Pods-Runner.release-production.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q9FBT3ZA8A;
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore co.zaven.flutter-ci-test";
 			};
 			name = "Release-production";
 		};
