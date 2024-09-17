@@ -29,7 +29,7 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build apk -t lib/main_development.dart --debug --flavor development --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_DEVELOPMENT }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: android-alpha
           path: build/app/outputs/flutter-apk/app-development-debug.apk
@@ -43,7 +43,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: android-alpha
           path: build/app/outputs/flutter-apk
