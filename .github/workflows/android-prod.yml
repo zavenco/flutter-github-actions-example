@@ -37,7 +37,7 @@ jobs:
         run: |
           echo $UPLOAD_KEYSTORE_FILE | base64 -di > ./android/app/upload-key.jks
           flutter build appbundle -t lib/main_production.dart --release --flavor production --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_PRODUCTION }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: android-production
           path: build/app/outputs/bundle/productionRelease/app-production-release.aab
@@ -51,7 +51,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: android-production
           path: build/app/outputs/bundle/productionRelease

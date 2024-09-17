@@ -1,0 +1,87 @@
+name: Build & Deploy iOS Beta
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+env:
+  FLUTTER_CHANNEL: 'stable'
+  FLUTTER_VERSION: '2.8.1'
+  RUBY_VERSION: '3.0.3'
+  BUNDLER_VERSION: '2.3.0'
+
+jobs:
+  build_ios_staging:
+    name: Build iOS Beta
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup SSH agent
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          FASTLANE_MATCH_GIT_DEPLOY_KEY: ${{ secrets.FASTLANE_MATCH_GIT_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          mkdir ./ssh_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          echo "$FASTLANE_MATCH_GIT_DEPLOY_KEY" > ./ssh_key/deploy_key
+          chmod 0600 ./ssh_key/deploy_key
+          ssh-add ./ssh_key/deploy_key
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+      - run: flutter pub get
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      - run: flutter build ios -t lib/main_staging.dart --release --flavor staging --no-codesign --build-number=${{ github.run_number }} --dart-define=DEFINE_API_BASE_URL=${{ secrets.CI_TEST_API_URL_STAGING }}
+      - name: Build app
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        run: | 
+          cd ios
+          gem install bundler -v ${{ env.BUNDLER_VERSION }}
+          bundle install
+          bundle exec fastlane build_ios_beta
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-beta
+          path: "./Flutter CI Test Beta.ipa"
+          retention-days: 1
+      - name: Cleanup
+        if: always()
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh-add -D
+          rm -rf ./ssh_key
+  deploy_ios_staging:
+    name: Deploy iOS Beta
+    runs-on: ubuntu-20.04
+    needs: build_ios_staging
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-beta
+          path: ios
+      - run: stat "ios/Flutter CI Test Beta.ipa"
+      - name: Deploy app
+        env:
+          CI_TEST_FIREBASE_SERVICE_ACCOUNT_STAGING: ${{ secrets.CI_TEST_FIREBASE_SERVICE_ACCOUNT_STAGING }}
+          CI_TEST_IOS_FIREBASE_APP_ID_STAGING: ${{ secrets.CI_TEST_IOS_FIREBASE_APP_ID_STAGING }}
+        run: |
+          cd ios
+          echo $CI_TEST_FIREBASE_SERVICE_ACCOUNT_STAGING > ./service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/service-account.json
+          gem install bundler -v ${{ env.BUNDLER_VERSION }}
+          bundle install
+          bundle exec fastlane deploy_ios_beta
