@@ -28,6 +28,7 @@ platform :android do
     begin
       upload_to_play_store(
         track: 'internal',
+        release_status: 'draft',
         aab: '../build/app/outputs/bundle/productionRelease/app-production-release.aab',
         json_key_data: ENV['CI_TEST_GOOGLE_DEVELOPER_SERVICE_ACCOUNT_ACTOR_FASTLANE'],
         skip_upload_screenshots: true,
